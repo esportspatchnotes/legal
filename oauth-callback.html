@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Clipsmoney — TikTok Login Complete</title>
+  <style>
+    :root { color-scheme: dark; font-family: ui-sans-serif, sans-serif; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0b1118; color: #eef5f7; }
+    main { width: min(38rem, calc(100% - 3rem)); }
+    h1 { font-size: clamp(2rem, 7vw, 4rem); line-height: .95; margin: 0 0 1.25rem; }
+    p { color: #adbdc5; line-height: 1.6; }
+    pre { overflow-wrap: anywhere; white-space: pre-wrap; padding: 1rem; background: #15212b; border-left: 3px solid #25f4ee; }
+    button { border: 0; padding: .85rem 1.1rem; background: #25f4ee; color: #071014; font: inherit; font-weight: 700; cursor: pointer; }
+    .error { color: #ff8d9b; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>CLIPSMONEY × TIKTOK</p>
+    <h1>Login complete.</h1>
+    <p id="message">Copy the authorization code below, then return to Clipsmoney.</p>
+    <pre id="code">Reading callback…</pre>
+    <button id="copy" type="button">Copy authorization code</button>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code");
+    const error = params.get("error") || params.get("error_description");
+    const output = document.querySelector("#code");
+    const message = document.querySelector("#message");
+    const button = document.querySelector("#copy");
+
+    if (error) {
+      message.classList.add("error");
+      message.textContent = "TikTok did not authorize the login.";
+      output.textContent = error;
+      button.hidden = true;
+    } else if (code) {
+      output.textContent = code;
+      button.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(code);
+        button.textContent = "Copied";
+      });
+    } else {
+      message.textContent = "No authorization code was included. Start the login flow again.";
+      output.textContent = "Missing code";
+      button.hidden = true;
+    }
+  </script>
+</body>
+</html>
